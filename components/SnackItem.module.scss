@@ -1,0 +1,24 @@
+.div {
+    border: 1px solid red;
+    color: blue;
+    background-color: yellow;
+
+    ul {
+        font-style: none;
+
+        li {
+            list-style: none;
+            a {
+                color: yellow;
+            }
+
+            a:hover {
+                @apply border-gray-200 bg-gray-200;
+            }
+
+            a.active {
+                @apply inline-block border border-blue-500 rounded py-1 px-3 bg-blue-500 text-white;
+            }
+        }
+    }
+}

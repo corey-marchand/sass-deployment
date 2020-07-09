@@ -1,209 +1,108 @@
-import Head from 'next/head'
+import React from 'react'
+import axios from 'axios'
+import Nav from '../components/Nav'
+import SnackForm from '../components/SnackForm'
+import SnackItem from '../components/SnackItem'
+import Footer from '../components/Footer'
+import Styles from './index.module.scss'
+const url = 'https://drf-snacks-api.herokuapp.com/api/v1/snacks/';
 
-export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            snacks: props.snacks
         }
+        this.snackCreateHandler = this.snackCreateHandler.bind(this);
+    }
 
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+    async snackCreateHandler(snack) {
+        const response = await axios.post(url, snack);
 
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+        const savedSnack = response.data;
 
-        footer img {
-          margin-left: 0.5rem;
-        }
+        const updatedSnacks = this.state.snacks.concat(savedSnack);
 
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+        this.setState({
+            snacks: updatedSnacks
+        })
 
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
+        // Stretch: how can you make even snappier?
+    }
 
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
+    render() {
+        return (
+            <div className='styles.div'>
+                <div className="container">
+                    <Nav page="home" />
+                    <h1>Snacks</h1>
 
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
+                    <div className="flex">
 
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
+                    <section className="w-1/4">
+                        <div className="max-w-sm rounded overflow-hidden shadow-lg">
+                            <img className="w-full" src="/Snack_Time_group_image1.jpg" alt="Snack Time"></img>
+                            <div className="px-6 py-4">
+                                <div className="font-bold text-xl mb-2">Who says no snacking between meals?</div>
 
-        .title,
-        .description {
-          text-align: center;
-        }
+                            </div>
+                            <div className="px-6 py-4">
+                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">#snacktime</span>
+                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2">#summerofsnacks</span>
+                                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#fullstacksnacks</span>
+                            </div>
+                        </div>
 
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
+                    </section>
 
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
+                    <section className="flex-1">
+                        <ul>
+                            {this.state.snacks.map(snack => <SnackItem key={snack.id} snack={snack} />)}
+                        </ul>
+                        <SnackForm onSnackCreate={this.snackCreateHandler} />
+                    </section>
+                    </div>
 
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
+                    <style jsx>{`
+                .container {
+                    text-align: center;
+                }
+            `}
+                    </style>
 
-          max-width: 800px;
-          margin-top: 3rem;
-        }
+                    <style jsx global>{`
+                    html,
+                    body {
+                    padding: 0;
+                    margin: 0;
+                    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+                        Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+                        sans-serif;
+                    }
+                    * {
+                    box-sizing: border-box;
+                    }
+                `}</style>
 
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
+                <Footer />
 
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
+                </div>
+            </div>
+        )
+    }
+}
 
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
+export default Home
 
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
+// export async function getStaticProps() {
+export async function getServerSideProps() {
 
-        .logo {
-          height: 1em;
-        }
+    const response = await fetch(url);
+    const snacks = await response.json();
 
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+    return {
+        props: {
+            snacks: snacks,
+        },
+    }
 }
